@@ -1,0 +1,49 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+    {% if profile %}
+        <div id="topProfile">
+            <div>
+                <h3  class="display-1"  > @{{profile.username}} </h3>
+            </div>
+            <div>
+                <div><strong>Followers: </strong> {{followers.count}}</div>
+                <div><strong>Following: </strong> {{following.count}}</div>
+            </div>
+            <div>
+                {% if user.is_authenticated %}
+                    {% if profile.id != request.user.id %}
+                        {%if isFollowing %}
+                            <form action="{% url 'unfollow_user' %}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="unfollowUser" value="{{profile.username}}">
+                                <input type="submit" class="btn btn-outline-dark" id="newPost" value="Unfollow"></input>
+                            </form>
+                        {% else %}
+                            <form action="{% url 'follow_user' %}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="followUser" value="{{profile.username}}">
+                                <input type="submit" class="btn btn-outline-dark" id="newPost" value="follow"></input>
+                            </form>
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            </div>
+            <br/>
+        </div>
+        {% for post in userPosts %}
+            <div id="eachPost" class="col-9">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <p class="card-text">{{post.message}}</p>
+                        <a href="#" class="btn btn-primary"><i class="bi bi-heart"></i></a>{{post.likes}}
+                    </div>
+                    <div class="card-footer text-muted">
+                        <strong>By: </strong>@{{post.author}}  <strong>On: </strong>{{post.timeStamp}}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}
